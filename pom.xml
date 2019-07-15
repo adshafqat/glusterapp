@@ -12,6 +12,7 @@
 	<artifactId>glusterapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>glusterapp</name>
+	<packaging>war</packaging>
 	<description>Project to check Gluster FS functionality </description>
 
 	<properties>
