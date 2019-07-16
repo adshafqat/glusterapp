@@ -1,8 +1,6 @@
 package com.zaynsolutions.glusterapp;
 
-import org.springframework.stereotype.Component;
 
-@Component
 public class GFile {
 	 
 	  private String name;

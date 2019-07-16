@@ -1,6 +1,8 @@
 package com.zaynsolutions.glusterapp;
 
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +13,7 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +44,7 @@ class GlusterApp {
             
 	   List<String> result=null;
 	   String path=env.getProperty("file.path");
+	   System.out.println(path);
 		try (Stream<Path> walk = Files.walk(Paths.get(path))) {
 
 			 result = walk.filter(Files::isRegularFile)
@@ -68,10 +72,27 @@ class GlusterApp {
 	//git commit -m 'added config in pom'
 	//git push origin master
 	
-	
-   @RequestMapping(value = "/storeFile", method = RequestMethod.POST)
-   public String storeFile(@RequestBody GFile gfile) {	      
-       return "File created successfully. File name is "+gfile.getName()+". The file contents are "+gfile.getContent() ;
+   @RequestMapping(value = "//storeFile", method = RequestMethod.POST,consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)	
+   public String storeFile(GFile gfile) {	      
+	   String path=env.getProperty("file.path");
+	   File file = new File(path+"/"+gfile.getName());
+	   try{
+	 //Create the file
+	 if (file.createNewFile())
+	 {
+	     System.out.println("File is created!");
+	 } else {
+	     System.out.println("File already exists.");
+	 }
+	  
+	 //Write Content
+	 FileWriter writer = new FileWriter(file);
+	 writer.write(gfile.getContent());
+	 writer.close();
+	   }catch(Exception e) {
+		   e.printStackTrace();
+	   }
+       return "File created successfully. File name is "+path+"/"+gfile.getName()+". The file contents are "+gfile.getContent()+". If you want to see all files click here <a href='/listFiles'>List Files</a>" ;
    }
 
 
